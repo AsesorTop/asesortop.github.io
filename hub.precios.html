@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Configurador · Pack Tecnológico Hub Inmobiliario</title>
+<style>
+:root{--bg:#F4F7FA;--card:#fff;--line:#E2E8F0;--text:#0F172A;--dim:#64748B;--acc:#0891B2;--acc-soft:rgba(8,145,178,.1);box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0B1220;--card:#131C30;--line:rgba(226,232,240,.1);--text:#F8FAFC;--dim:#94A3B8;--acc:#22D3EE;--acc-soft:rgba(34,211,238,.13)}}
+:root[data-theme="dark"]{--bg:#0B1220;--card:#131C30;--line:rgba(226,232,240,.1);--text:#F8FAFC;--dim:#94A3B8;--acc:#22D3EE;--acc-soft:rgba(34,211,238,.13)}
+*{box-sizing:border-box;margin:0}
+body{background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:24px 16px 48px}
+.wrap{max-width:1080px;margin:0 auto}
+.eyebrow{color:var(--acc);font-weight:600;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase}
+h1{font-size:clamp(1.6rem,4vw,2.4rem);line-height:1.1;margin:6px 0 6px}
+.sub{color:var(--dim);max-width:60ch}
+.grid{display:grid;grid-template-columns:1fr 380px;gap:24px;margin-top:24px;align-items:start}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px}
+h2{font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin:0 0 12px;font-weight:600}
+.seg{display:inline-flex;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:3px;margin-top:16px}
+.seg button{border:0;background:none;color:var(--dim);padding:8px 18px;border-radius:8px;font:inherit;font-weight:600;cursor:pointer}
+.seg button.on{background:var(--acc);color:#04222A}
+.base{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.base .price{font-size:1.6rem;font-weight:700;color:var(--acc);white-space:nowrap}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.chips span{font-size:.78rem;padding:4px 10px;border-radius:99px;background:var(--acc-soft);color:var(--text)}
+.sec{margin-top:22px}
+.opt{display:flex;align-items:center;gap:12px;padding:13px 14px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:border-color .2s,background .2s}
+.opt:hover{border-color:var(--acc)}
+.opt.on{border-color:var(--acc);background:var(--acc-soft)}
+.opt input{width:18px;height:18px;accent-color:var(--acc);flex:none}
+.opt .n{flex:1}
+.opt .n small{display:block;color:var(--dim);font-size:.78rem}
+.opt .p{font-weight:600;white-space:nowrap}
+.free{list-style:none;padding:0;display:grid;gap:6px;color:var(--dim);font-size:.9rem}
+.free li::before{content:"✓ ";color:var(--acc);font-weight:700}
+.sticky{position:sticky;top:16px}
+.total{font-size:clamp(2.2rem,6vw,3rem);font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums}
+.lbl{color:var(--dim);font-size:.85rem}
+.row{margin-top:14px}
+.row .top{display:flex;justify-content:space-between;gap:10px;font-size:.88rem}
+.row .top b{font-variant-numeric:tabular-nums;font-weight:600}
+.bar{height:6px;background:var(--bg);border-radius:9px;margin-top:6px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--acc);border-radius:9px;width:0;transition:width .5s cubic-bezier(.22,.61,.36,1)}
+.row.new{animation:pop .4s ease}
+@keyframes pop{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.ann{margin-top:18px;padding-top:14px;border-top:1px dashed var(--line);font-size:.88rem}
+.ann .top{display:flex;justify-content:space-between}
+.ann small{color:var(--dim);display:block;margin-top:2px}
+.grand{display:flex;justify-content:space-between;align-items:baseline;margin-top:12px;font-weight:700}
+.act{display:flex;gap:8px;margin-top:18px}
+.act button{flex:1;padding:10px;border-radius:10px;border:1px solid var(--line);background:none;color:var(--text);font:inherit;font-weight:600;cursor:pointer}
+.act button.pri{background:var(--acc);border-color:var(--acc);color:#04222A}
+.note{color:var(--dim);font-size:.78rem;margin-top:14px}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="eyebrow">Hub Inmobiliario Digital</div>
+  <h1>Configura tu Pack Tecnológico</h1>
+  <p class="sub">Parte del precio de salida y agrega los accesorios que necesitas. El total se actualiza al instante.</p>
+  <div class="seg" id="seg"><button data-t="0" class="on">Tarifa A</button><button data-t="1">Tarifa B</button></div>
+
+  <div class="grid">
+    <div>
+      <div class="card">
+        <h2>Precio de salida</h2>
+        <div class="base"><div><b>Botones activos</b><div class="lbl">Incluidos en todos los packs</div></div><div class="price" id="basePrice"></div></div>
+        <div class="chips" id="chips"></div>
+      </div>
+
+      <div class="card sec"><h2>Formulario base entregable</h2><div id="g-base"></div></div>
+      <div class="card sec"><h2>Formularios de prospección extra</h2><div id="g-forms"></div></div>
+      <div class="card sec"><h2>Tarjeta NFC de acercamiento</h2><div id="g-nfc"></div></div>
+      <div class="card sec"><h2>Otros formularios</h2><div id="g-otros"></div></div>
+      <div class="card sec"><h2>Asistencia técnica y entregables · sin costo adicional</h2>
+        <ul class="free">
+          <li>Tutorial básico de clonación de formulario fuente</li>
+          <li>1 hr de asistencia presencial para personalización por formulario de prospección</li>
+          <li>2 cambios por año, solo de enlaces</li>
+          <li>Código QR en SVG o PDF vectorial</li>
+        </ul>
+      </div>
+    </div>
+
+    <aside class="sticky card">
+      <h2>Resumen de tu pack</h2>
+      <div class="total" id="total">$0.00</div>
+      <div class="lbl">Total del Pack · MXN</div>
+      <div id="break"></div>
+      <div class="ann">
+        <div class="top"><span>Anualidad</span><b id="annV">$500.00</b></div>
+        <small>Pago único por anualidad. En diciembre es proporcional a la entrega del Hub.</small>
+        <div class="grand"><span>Total con anualidad</span><span id="grand"></span></div>
+      </div>
+      <div class="act"><button id="all" class="pri">Pack completo</button><button id="clear">Limpiar</button></div>
+      <p class="note">Al sumar los accesorios en el orden del listado, el total coincide con los acumulados de la lista de precios.</p>
+    </aside>
+  </div>
+</div>
+
+<script>
+const BASE=[799,599], ANN=500;
+const BUTTONS=["Guardar contacto","WhatsApp","Llamar","Correo electrónico","Redes sociales","Sitio web empresarial","Configura tu solicitud inmobiliaria","En alianza con Kliq","Ubicación de la empresa"];
+const ITEMS=[
+ {id:"fb",g:"g-base",n:"Formulario activo",s:"Compra de casa habitación",p:[400,300]},
+ {id:"rc",g:"g-forms",n:"Renta de casa habitación",p:[300,200]},
+ {id:"rd",g:"g-forms",n:"Renta de departamento",p:[300,200]},
+ {id:"ro",g:"g-forms",n:"Renta de oficinas y cowork",p:[300,200]},
+ {id:"rl",g:"g-forms",n:"Renta de locales comerciales",p:[300,200]},
+ {id:"rb",g:"g-forms",n:"Renta de bodegas / nave industrial",p:[400,300]},
+ {id:"nfc",g:"g-nfc",n:"Tarjeta NFC de PVC, tamaño estándar, blanca",s:"Configurada · personalización a cuenta del usuario",p:[400,300]},
+ {id:"ot",g:"g-otros",n:"Otros formularios",s:"A partir de 10 suscripciones de interés",p:[500,500]}
+];
+const fmt=n=>new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN"}).format(n);
+let tier=0, sel=new Set(), shown=0, raf, prevSel=new Set();
+const $=id=>document.getElementById(id);
+
+ITEMS.forEach(it=>{
+  const l=document.createElement("label"); l.className="opt"; l.dataset.id=it.id;
+  l.innerHTML=`<input type="checkbox"><span class="n">${it.n}${it.s?`<small>${it.s}</small>`:""}</span><span class="p"></span>`;
+  l.querySelector("input").addEventListener("change",e=>{e.target.checked?sel.add(it.id):sel.delete(it.id);render();});
+  $(it.g).appendChild(l);
+});
+$("chips").innerHTML=BUTTONS.map(b=>`<span>${b}</span>`).join("");
+
+function countTo(target){
+  cancelAnimationFrame(raf);
+  const from=shown, t0=performance.now(), d=500;
+  const step=t=>{const k=Math.min((t-t0)/d,1),e=1-Math.pow(1-k,3);shown=from+(target-from)*e;$("total").textContent=fmt(shown);if(k<1)raf=requestAnimationFrame(step);else shown=target;};
+  raf=requestAnimationFrame(step);
+}
+
+function render(){
+  const base=BASE[tier];
+  $("basePrice").textContent=fmt(base);
+  document.querySelectorAll(".opt").forEach(l=>{
+    const it=ITEMS.find(x=>x.id===l.dataset.id);
+    l.querySelector(".p").textContent="+"+fmt(it.p[tier]);
+    l.classList.toggle("on",sel.has(it.id));
+    l.querySelector("input").checked=sel.has(it.id);
+  });
+  const chosen=ITEMS.filter(i=>sel.has(i.id));
+  const total=base+chosen.reduce((a,i)=>a+i.p[tier],0);
+  const rows=[{n:"Botones activos (precio de salida)",v:base,id:"base"},...chosen.map(i=>({n:i.n+(i.s&&i.id==="fb"?" · "+i.s:""),v:i.p[tier],id:i.id}))];
+  $("break").innerHTML=rows.map(r=>`<div class="row${prevSel.has(r.id)?"":" new"}"><div class="top"><span>${r.n}</span><b>${fmt(r.v)}</b></div><div class="bar"><i data-w="${(r.v/total*100).toFixed(1)}"></i></div></div>`).join("");
+  requestAnimationFrame(()=>document.querySelectorAll(".bar i").forEach(b=>b.style.width=b.dataset.w+"%"));
+  prevSel=new Set(rows.map(r=>r.id));
+  $("grand").textContent=fmt(total+ANN);
+  countTo(total);
+}
+
+$("seg").addEventListener("click",e=>{
+  const b=e.target.closest("button"); if(!b)return;
+  tier=+b.dataset.t;
+  document.querySelectorAll("#seg button").forEach(x=>x.classList.toggle("on",x===b));
+  render();
+});
+$("all").onclick=()=>{ITEMS.filter(i=>i.id!=="ot").forEach(i=>sel.add(i.id));render();};
+$("clear").onclick=()=>{sel.clear();render();};
+render();
+</script>
+</body>
+</html>
