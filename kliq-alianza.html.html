@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KLIQ · Red de Asesores Certificados en Hermosillo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B1220; --panel:#131C30; --line:rgba(226,232,240,0.09);
+    --text:#FFFFFF; --text-soft:#E2E8F0; --text-dim:#8B96A8;
+    --accent:#22D3EE; --accent-2:#38BDF8; --accent-dim:rgba(34,211,238,0.14);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{
+    height:100%;
+    background:radial-gradient(1200px 800px at 85% -10%,rgba(34,211,238,0.10),transparent 60%),
+               radial-gradient(900px 700px at -10% 110%,rgba(56,189,248,0.08),transparent 55%),var(--bg);
+    color:var(--text-soft);
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+    overflow:hidden;-webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Space Grotesk','Inter',sans-serif;color:var(--text);letter-spacing:-0.01em}
+  .grid-lines{
+    position:fixed;inset:0;pointer-events:none;z-index:0;
+    background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:64px 64px;mask-image:radial-gradient(circle at 50% 40%,black 0%,transparent 75%);opacity:.5;
+  }
+  .deck{position:relative;height:100dvh;width:100vw;z-index:1}
+  .slide{
+    position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;
+    padding:clamp(70px,7vw,100px) clamp(24px,9vw,140px) clamp(70px,7vw,100px);
+    opacity:0;transform:translateX(40px);
+    transition:opacity .55s cubic-bezier(.22,.61,.36,1),transform .55s cubic-bezier(.22,.61,.36,1);
+    pointer-events:none;overflow-y:auto;
+  }
+  .slide.active{opacity:1;transform:translateX(0);pointer-events:auto;z-index:2}
+  .slide.prev{transform:translateX(-40px)}
+  .eyebrow{color:var(--accent);font-size:.8rem;font-weight:600;margin-bottom:14px;letter-spacing:.06em;text-transform:uppercase}
+  .slide h2{font-size:clamp(1.6rem,3.6vw,2.7rem);line-height:1.15;font-weight:700;max-width:24ch}
+  .content-row{margin-top:clamp(20px,3.2vw,36px);display:flex;gap:clamp(22px,3.6vw,50px);align-items:flex-start;flex-wrap:wrap}
+  .prose{max-width:78ch;display:flex;flex-direction:column;gap:16px}
+  .prose p{
+    color:var(--text-soft);font-size:clamp(.98rem,1.25vw,1.15rem);line-height:1.65;
+    opacity:0;transform:translateY(10px);transition:opacity .5s ease,transform .5s ease;
+  }
+  .slide.active .prose p{opacity:1;transform:translateY(0)}
+  .prose p.quote{
+    color:var(--text);font-family:'Space Grotesk',sans-serif;font-weight:600;
+    font-size:clamp(1.1rem,1.8vw,1.5rem);line-height:1.35;
+    border-left:2px solid var(--accent);padding-left:18px;margin-top:6px;
+  }
+  .points{list-style:none;display:flex;flex-direction:column;gap:18px;max-width:780px}
+  .points li{
+    display:flex;gap:14px;align-items:flex-start;font-size:clamp(.95rem,1.15vw,1.08rem);
+    color:var(--text-soft);opacity:0;transform:translateY(10px);
+    transition:opacity .5s ease,transform .5s ease;line-height:1.55;
+  }
+  .slide.active .points li{opacity:1;transform:translateY(0)}
+  .points li .dot{flex:none;width:8px;height:8px;border-radius:50%;margin-top:8px;background:var(--accent);box-shadow:0 0 12px rgba(34,211,238,.7)}
+  .points li b{color:var(--text);font-weight:600}
+  .stagger-1{transition-delay:.05s}.stagger-2{transition-delay:.14s}.stagger-3{transition-delay:.23s}.stagger-4{transition-delay:.32s}
+  .hero-mark{display:inline-flex;align-items:center;gap:10px;color:var(--accent);font-weight:600;font-size:.85rem;letter-spacing:.03em;margin-bottom:22px}
+  .hero-mark .bar{width:34px;height:2px;background:var(--accent);display:inline-block}
+  .hero h1{font-size:clamp(3rem,10vw,7rem);font-weight:700;line-height:1;color:var(--accent)}
+  .hero .lede{margin-top:18px;font-family:'Space Grotesk',sans-serif;color:var(--text);font-size:clamp(1.2rem,2.6vw,2rem);font-weight:500;max-width:24ch;line-height:1.2}
+  .click-zone{position:fixed;top:0;bottom:0;width:18%;z-index:3;cursor:pointer}
+  .click-zone.left{left:0}.click-zone.right{right:0}
+  .nav-controls{position:fixed;bottom:clamp(16px,3vw,32px);right:clamp(16px,3vw,40px);display:flex;gap:12px;z-index:5}
+  .nav-btn{
+    width:46px;height:46px;border-radius:50%;border:1px solid var(--line);background:rgba(19,28,48,.85);
+    backdrop-filter:blur(6px);color:var(--text-soft);display:flex;align-items:center;justify-content:center;cursor:pointer;
+    transition:border-color .25s ease,color .25s ease,transform .15s ease;
+  }
+  .nav-btn:hover{border-color:var(--accent);color:var(--accent)}
+  .nav-btn:active{transform:scale(.94)}
+  .nav-btn:disabled{opacity:.3;cursor:default}
+  .nav-btn svg{width:18px;height:18px}
+  .page-indicator{position:fixed;bottom:clamp(16px,3vw,32px);left:clamp(16px,3vw,40px);z-index:5;font-size:.85rem;color:var(--text-dim);font-variant-numeric:tabular-nums}
+  .page-indicator b{color:var(--text);font-weight:600}
+  .progress-track{position:fixed;bottom:0;left:0;right:0;height:3px;background:rgba(255,255,255,.06);z-index:4}
+  .progress-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent-2),var(--accent));transition:width .5s cubic-bezier(.22,.61,.36,1)}
+  .slide-dots{position:fixed;top:clamp(16px,3vw,32px);right:clamp(16px,3vw,40px);z-index:5;display:flex;gap:6px;max-width:210px;flex-wrap:wrap;justify-content:flex-end}
+  .slide-dots span{width:6px;height:6px;border-radius:50%;background:rgba(226,232,240,.22);transition:background .3s ease,transform .3s ease}
+  .slide-dots span.active{background:var(--accent);transform:scale(1.3)}
+  .brand-tag{position:fixed;top:clamp(16px,3vw,32px);left:clamp(16px,3vw,40px);z-index:5;font-size:.78rem;color:var(--text-dim);font-weight:500;letter-spacing:.02em}
+  .brand-tag b{color:var(--text-soft)}
+  @media(max-width:720px){.click-zone{width:12%}.nav-controls{gap:8px}.nav-btn{width:40px;height:40px}}
+  @media(prefers-reduced-motion:reduce){.slide,.points li,.prose p{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="grid-lines"></div>
+<div class="brand-tag"><b>KLIQ</b> INMOBILIARIO</div>
+<div class="slide-dots" id="dots"></div>
+
+<div class="deck">
+
+  <!-- 1 HERO -->
+  <section class="slide">
+    <div class="hero">
+      <div class="hero-mark"><span class="bar"></span> ALIANZA POR INVITACIÓN</div>
+      <h1>KLIQ</h1>
+      <p class="lede">Red de Asesores Certificados en Hermosillo</p>
+    </div>
+  </section>
+
+  <!-- 2 INTRO -->
+  <section class="slide">
+    <div class="eyebrow">KLIQ</div>
+    <div class="content-row"><div class="prose">
+      <p class="stagger-1">KLIQ funciona bajo una lógica distinta: entiende la demanda como un activo inmobiliario. La plataforma actúa como tu aliado estratégico — trabajando en paralelo a tu forma de operar de siempre — para satisfacer las necesidades de tus prospectos calificados, tanto para compra como para renta, transformando tu cartera de clientes en un imán para propietarios que desean comercializar de forma privada, sin publicidad masiva ni exposición pública del inmueble.</p>
+      <p class="stagger-2">Una práctica habitual en segmentos medio, alto y premium, activos de inversión e inmuebles singulares, donde la discreción forma parte del valor de la operación.</p>
+    </div></div>
+  </section>
+
+  <!-- 3 ALIANZA -->
+  <section class="slide">
+    <div class="eyebrow">Atributo</div>
+    <h2>Una alianza por invitación</h2>
+    <div class="content-row"><div class="prose">
+      <p class="stagger-1">Acceso limitado a un segmento de 200 asesores inmobiliarios en Hermosillo, seleccionados por su profesionalismo, ética y capacitación constante.</p>
+    </div></div>
+  </section>
+
+  <!-- 4 DIGITALIZACIÓN -->
+  <section class="slide">
+    <div class="eyebrow">Atributo</div>
+    <h2>Digitalización y administración de tus prospectos</h2>
+    <div class="content-row"><div class="prose">
+      <p class="stagger-1">KLIQ te permite digitalizar y administrar, desde tu cuenta de usuario, las necesidades de tus prospectos. Nosotros mostramos esa demanda a los propietarios dentro de nuestro ecosistema privado, y KLIQ te consigue el inmueble Ad hoc a las necesidades de tu prospecto en un mercado Off. Market</p>
+    </div></div>
+  </section>
+
+  <!-- 5 INVENTARIO (a) -->
+  <section class="slide">
+    <div class="eyebrow">Atributo</div>
+    <h2>El inventario que su prospecto aún no ha visto</h2>
+    <div class="content-row"><div class="prose">
+      <p class="stagger-1">Hoy, un prospecto que lleva semanas buscando ya conoce casi todo el inventario publicado en la ciudad — lo vio en portales y en redes. Si la gran mayoría no ha cerrado todavía, no es por falta de opciones visibles: es porque la gran demanda de propiedades, hoy en día está superando el inventario existente en nuestra ciudad</p>
+      <p class="stagger-2">Hoy ustedes ya comparten las necesidades de sus prospectos dentro de grupos del gremio, esperando que algún colega tenga, por coincidencia, la propiedad exacta. Es un buen esfuerzo, pero depende de lo que ese círculo cerrado ya trae en cartera — si nadie la tiene, la solicitud se queda sin respuesta.</p>
+    </div></div>
+  </section>
+
+  <!-- 6 INVENTARIO (b) -->
+  <section class="slide">
+    <div class="eyebrow">Atributo · El inventario que su prospecto aún no ha visto</div>
+    <div class="content-row"><div class="prose">
+      <p class="stagger-1">KLIQ funciona distinto: su sitio web público, más pauta paga en redes sociales, pone esa misma solicitud frente a todo el universo de propietarios de Hermosillo — incluyendo a quienes ni siquiera habían pensado en vender o rentar todavía. No depende de que alguien ya tenga la propiedad captada: sale a generar esa oportunidad donde antes no existía.</p>
+      <p class="quote stagger-2">No es más inventario del que ya conoce. Es el único inventario que todavía no conoce.</p>
+    </div></div>
+  </section>
+
+  <!-- 7 TECNOLOGÍA -->
+  <section class="slide">
+    <div class="eyebrow">Atributo</div>
+    <h2>Tecnología y Privacidad</h2>
+    <div class="content-row"><ul class="points">
+      <li class="stagger-1"><span class="dot"></span><span><b>Privacidad blindada:</b> Con herramientas exclusivas en tu cuenta de usuario generas fichas técnicas automatizadas. El sistema les asigna un ID único y encriptado que resguarda tu cartera.</span></li>
+      <li class="stagger-2"><span class="dot"></span><span><b>Certidumbre financiera:</b> La ficha muestra datos duros que atraen al propietario: presupuesto real, zonas deseadas y validación de crédito (bancario/Infonavit).</span></li>
+      <li class="stagger-3"><span class="dot"></span><span><b>El imán inmobiliario:</b> El propietario a través del sitio web público de KLIQ interactúa con un mapa de demanda o con el motor de matching inteligente, que le ofrece mayor precisión en su búsqueda.</span></li>
+    </ul></div>
+  </section>
+
+  <!-- 8 MODELO (a) -->
+  <section class="slide">
+    <div class="eyebrow">El modelo de negocio</div>
+    <h2>Especialización 50/50: cada rol se enfoca en su parte del proceso</h2>
+    <div class="content-row"><div class="prose">
+      <p class="stagger-1">Mientras ustedes siguen atendiendo a su prospecto por su propio canal, como lo han hecho siempre, KLIQ divide el trabajo en dos roles especializados en paralelo, para que cada quien avance su parte al mismo tiempo, sin esperar a que el otro termine:</p>
+    </div></div>
+  </section>
+
+  <!-- 9 MODELO (b) -->
+  <section class="slide">
+    <div class="eyebrow">El modelo de negocio · Especialización 50/50</div>
+    <div class="content-row"><ul class="points">
+      <li class="stagger-1"><span class="dot"></span><span><b>Captación y operación (50%):</b> Cuando su prospecto atrae a un propietario, nuestro equipo se encarga de la visita física, la auditoría técnica/legal, el material audiovisual y la captación formal del inmueble — el trabajo operativo que normalmente consume más tiempo.</span></li>
+      <li class="stagger-2"><span class="dot"></span><span><b>Su prospecto, su cierre (50%):</b> Ustedes ya invirtieron su tiempo en lo más importante: conseguir y calificar al comprador. A partir de ahí, acompañan junto con nuestro equipo el seguimiento de trámites y documentación de ambas partes, hasta el cierre de la operación.</span></li>
+    </ul></div>
+    <div class="content-row"><div class="prose">
+      <p class="quote stagger-3">Este canal adicional suma más cierres a tu cartera de cierres — y esa operación también cuenta para los números de la inmobiliaria a la que perteneces</p>
+    </div></div>
+  </section>
+
+  <!-- 10 DERECHO DE ORIGEN (a) -->
+  <section class="slide">
+    <div class="eyebrow">El derecho de origen</div>
+    <h2>Convertimos su trabajo de prospección en un activo financiero permanente</h2>
+    <div class="content-row"><ul class="points">
+      <li class="stagger-1"><span class="dot"></span><span><b>Adiós a la frustración:</b> Eliminamos el mayor dolor del sector: invertir semanas en un cliente, que éste decida no comprar o rentar los inmuebles propuestos y sentir que el tiempo se perdió.</span></li>
+      <li class="stagger-2"><span class="dot"></span><span><b>Su huella digital:</b> Si el prospecto del Asesor Origen detona el interés de un propietario, y nuestro equipo valida la legitimidad de la propiedad y formaliza el contrato de captación, ese asesor deja una marca digital imborrable en la propiedad. Este paso de validación protege a todo el sistema: evita que alguien reclame un Derecho de Origen sobre una propiedad inexistente o simulada.</span></li>
+    </ul></div>
+  </section>
+
+  <!-- 11 DERECHO DE ORIGEN (b) -->
+  <section class="slide">
+    <div class="eyebrow">El derecho de origen</div>
+    <h2>Ingresos residuales</h2>
+    <div class="content-row"><div class="prose">
+      <p class="stagger-1">Si en el futuro otro asesor cierra la venta de ese inmueble con un cliente completamente distinto, el Asesor Origen cobra un residual del 0.5% del total de la comisión pactada (usualmente el 5%) por el cierre de venta, o el 15% en una operación de renta — monto que KLIQ otorga de su propia comisión neta.</p>
+    </div></div>
+  </section>
+
+  <!-- 12 VENTAJA COMPETITIVA -->
+  <section class="slide">
+    <div class="eyebrow">Una ventaja competitiva</div>
+    <div class="content-row"><div class="prose">
+      <p class="stagger-1">Una prospección impecable y una administración estratégica de su cliente es, a partir de hoy, la llave maestra hacia cierres más eficaces.</p>
+      <p class="stagger-2">Como asesores invitados a este ecosistema, ustedes adquieren una ventaja competitiva real en el mercado local: el estatus de Asesor Origen se construye con la calidad de su prospección. Su capacidad para detectar y perfilar la demanda real de la ciudad se convierte en un activo financiero que genera ingresos, ya sea porque ustedes mismos cierran la operación o porque el sistema trabaja en segundo plano — monetizando, por primera vez en México, el trabajo de un asesor con un prospecto que terminó comprando o rentando con otra empresa.</p>
+    </div></div>
+  </section>
+
+  <!-- 13 COMPAÑEROS (a) -->
+  <section class="slide">
+    <div class="eyebrow">Compañeros del gremio</div>
+    <div class="content-row"><div class="prose">
+      <p class="stagger-1">Su cartera de prospectos ya es su activo más valioso. El reto de siempre ha sido el tiempo que toma encontrarles a nuestros prospectos la propiedad exacta dentro de lo disponible en el mercado.</p>
+      <p class="stagger-2">KLIQ no reemplaza su forma de trabajar: opera a su lado, como un recurso digital adicional. Sigan buscando como siempre, por sus canales de siempre — en paralelo, tu prospecto también accede a un inventario privado, propiedades que nunca llegan al mercado abierto porque sus dueños buscan discreción.</p>
+    </div></div>
+  </section>
+
+  <!-- 14 COMPAÑEROS (b) -->
+  <section class="slide">
+    <div class="eyebrow">Compañeros del gremio</div>
+    <div class="content-row"><div class="prose">
+      <p class="quote stagger-1">Cuando registran a un prospecto bien perfilado en KLIQ, no solo llenan un formulario: le dan a ese cliente una segunda oportunidad de encontrar su propiedad ideal, sin que les cueste un minuto extra de su operación diaria, ni reemplace una sola parte de lo que ya hacen bien.</p>
+    </div></div>
+  </section>
+
+</div>
+
+<div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+<div class="page-indicator" id="pageIndicator"></div>
+<div class="click-zone left" id="zoneLeft"></div>
+<div class="click-zone right" id="zoneRight"></div>
+<div class="nav-controls">
+  <button class="nav-btn" id="prevBtn" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></button>
+  <button class="nav-btn" id="nextBtn" aria-label="Siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></button>
+</div>
+
+<script>
+  const slides=Array.from(document.querySelectorAll('.slide')),total=slides.length;
+  let current=0;
+  const dotsWrap=document.getElementById('dots');
+  slides.forEach(()=>dotsWrap.appendChild(document.createElement('span')));
+  const dots=Array.from(dotsWrap.children);
+  const pf=document.getElementById('progressFill'),pi=document.getElementById('pageIndicator'),
+        prevBtn=document.getElementById('prevBtn'),nextBtn=document.getElementById('nextBtn');
+  function render(){
+    slides.forEach((s,i)=>{s.classList.remove('active','prev');if(i===current)s.classList.add('active');else if(i<current)s.classList.add('prev')});
+    dots.forEach((d,i)=>d.classList.toggle('active',i===current));
+    pf.style.width=((current+1)/total*100)+'%';
+    pi.innerHTML='<b>'+String(current+1).padStart(2,'0')+'</b> / '+String(total).padStart(2,'0');
+    prevBtn.disabled=current===0;nextBtn.disabled=current===total-1;
+  }
+  const goTo=i=>{if(i<0||i>=total)return;current=i;render()},next=()=>goTo(current+1),prev=()=>goTo(current-1);
+  prevBtn.onclick=prev;nextBtn.onclick=next;
+  document.getElementById('zoneLeft').onclick=prev;document.getElementById('zoneRight').onclick=next;
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key==='PageDown')next();
+    else if(e.key==='ArrowLeft'||e.key==='PageUp')prev();
+  });
+  let tx=null;
+  document.addEventListener('touchstart',e=>{tx=e.touches[0].clientX});
+  document.addEventListener('touchend',e=>{
+    if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;
+    if(Math.abs(dx)>50){dx<0?next():prev()}tx=null;
+  });
+  render();
+</script>
+</body>
+</html>
