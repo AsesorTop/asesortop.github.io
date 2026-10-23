@@ -7,7 +7,7 @@
 <meta property="og:title" content="Roberto Gastélum · Asesor Inmobiliario">
 <meta property="og:description" content="Asesor inmobiliario en Hermosillo. Guarda mi contacto para cuando lo necesites.">
 <meta property="og:image" content="https://asesortop.github.io/roberto-preview.jpg">
-<meta property="og:url" content="https://asesortop.github.io/roberto-gastelum.html">
+<meta property="og:url" content="https://asesortop.com/roberto-gastelum">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
@@ -304,15 +304,16 @@ function guardarContacto() {
   document.body.appendChild(a); a.click(); a.remove();
   URL.revokeObjectURL(url);
 }
+const URL_TARJETA = 'https://asesortop.com/roberto-gastelum';
+
 async function compartirTarjeta() {
   const titulo = "Roberto Gastélum · Asesor Inmobiliario";
   const texto = "Te comparto la tarjeta de Roberto Gastélum, asesor inmobiliario en Hermosillo. Por si tú o alguien que conozcas necesita asesoría inmobiliaria";
-  const url = location.href.split("#")[0];
   try {
     if (navigator.share) {
-      await navigator.share({ title: titulo, text: texto, url: url });
+      await navigator.share({ title: titulo, text: texto, url: URL_TARJETA });
     } else {
-      window.open("https://wa.me/?text=" + encodeURIComponent(texto + " " + url), "_blank", "noopener");
+      window.open("https://wa.me/?text=" + encodeURIComponent(texto + " " + URL_TARJETA), "_blank", "noopener");
     }
   } catch (e) {}
 }
