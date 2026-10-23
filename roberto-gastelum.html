@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Roberto Gastélum · Asesor Inmobiliario</title>
 <meta property="og:title" content="Roberto Gastélum · Asesor Inmobiliario">
-<meta property="og:description" content="Tu mejor decisión en bienes raíces. Contáctame.">
+<meta property="og:description" content="Asesor inmobiliario en Hermosillo. Guarda mi contacto para cuando lo necesites.">
 <meta property="og:image" content="https://asesortop.github.io/roberto-preview.jpg">
 <meta property="og:url" content="https://asesortop.github.io/roberto-gastelum.html">
 <meta property="og:type" content="website">
@@ -197,6 +197,11 @@
     Guardar contacto
   </button>
 
+  <button class="save-btn" style="margin-top:10px;" onclick="compartirTarjeta()" type="button">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+    Compartir
+  </button>
+
   <div class="actions">
 
     <a class="action" href="https://wa.me/526628486194?text=Hola%20Roberto%2C%20vi%20tu%20tarjeta%20y%20me%20interesa%20tu%20servicio%20profesional" target="_blank" rel="noopener">
@@ -262,13 +267,6 @@
       <span class="label"><b>Configura tu solicitud inmobiliaria</b><span>Indícanos tus objetivos</span></span>
     </a>
 
-    <a class="action" href="https://www.kliqinmobiliario.com/" target="_blank" rel="noopener">
-      <span class="icon">
-        <span style="font-family:'Poppins',sans-serif;font-weight:800;font-size:17px;color:#C11526;line-height:1;">K</span>
-      </span>
-      <span class="label"><b>En alianza con KLIQ</b><span>Acceso al mercado inmobiliario privado</span></span>
-    </a>
-
     <a class="action" href="https://www.google.com/maps/search/?api=1&query=Rio+Lerma+22%2C+Prados+del+Centenario%2C+Hermosillo%2C+Sonora" target="_blank" rel="noopener">
       <span class="icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="#C11526" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
@@ -305,6 +303,19 @@ function guardarContacto() {
   a.href = url; a.download = "Roberto_Gastelum.vcf";
   document.body.appendChild(a); a.click(); a.remove();
   URL.revokeObjectURL(url);
-}</script>
+}
+async function compartirTarjeta() {
+  const titulo = "Roberto Gastélum · Asesor Inmobiliario";
+  const texto = "Te comparto la tarjeta de Roberto Gastélum, asesor inmobiliario en Hermosillo. Por si tú o alguien que conozcas necesita asesoría inmobiliaria";
+  const url = location.href.split("#")[0];
+  try {
+    if (navigator.share) {
+      await navigator.share({ title: titulo, text: texto, url: url });
+    } else {
+      window.open("https://wa.me/?text=" + encodeURIComponent(texto + " " + url), "_blank", "noopener");
+    }
+  } catch (e) {}
+}
+</script>
 </body>
 </html>
