@@ -23,8 +23,11 @@ h2{font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--dim
 .seg button.on{background:var(--acc);color:#04222A}
 .base{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
 .base .price{font-size:1.6rem;font-weight:700;color:var(--acc);white-space:nowrap}
-.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
-.chips span{font-size:.78rem;padding:4px 10px;border-radius:99px;background:var(--acc-soft);color:var(--text)}
+.chips{list-style:none;padding:0;margin-top:14px;display:grid;grid-template-columns:repeat(2,1fr);gap:0 24px}
+.chips li{font-size:.88rem;padding:8px 0;border-bottom:1px solid var(--line);display:flex;gap:8px;align-items:center}
+.chips li::before{content:"✓";color:var(--acc);font-weight:700}
+@media(max-width:560px){.chips{grid-template-columns:1fr}}
+.subt{font-weight:600;margin:-4px 0 12px}
 .sec{margin-top:22px}
 .opt{display:flex;align-items:center;gap:12px;padding:13px 14px;border:1px solid var(--line);border-radius:10px;margin-bottom:8px;cursor:pointer;transition:border-color .2s,background .2s}
 .opt:hover{border-color:var(--acc)}
@@ -67,19 +70,18 @@ h2{font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--dim
     <div>
       <div class="card">
         <h2>Precio de salida</h2>
-        <div class="base"><div><b>Botones activos</b><div class="lbl">Incluidos en todos los packs</div></div><div class="price" id="basePrice"></div></div>
-        <div class="chips" id="chips"></div>
+        <div class="base"><div><b>Botones activos</b><div class="lbl">Incluidos en la tarifa seleccionada</div></div><div class="price" id="basePrice"></div></div>
+        <ul class="chips" id="chips"></ul>
       </div>
 
-      <div class="card sec"><h2>Formulario base entregable</h2><div id="g-base"></div></div>
-      <div class="card sec"><h2>Formularios de prospección extra</h2><div id="g-forms"></div></div>
+      <div class="card sec"><h2>Configura tu solicitud inmobiliaria</h2><div class="subt">Formularios de prospección</div><div id="g-forms"></div></div>
       <div class="card sec"><h2>Tarjeta NFC de acercamiento</h2><div id="g-nfc"></div></div>
       <div class="card sec"><h2>Otros formularios</h2><div id="g-otros"></div></div>
       <div class="card sec"><h2>Asistencia técnica y entregables · sin costo adicional</h2>
         <ul class="free">
           <li>Tutorial básico de clonación de formulario fuente</li>
           <li>1 hr de asistencia presencial para personalización por formulario de prospección</li>
-          <li>2 cambios por año, solo de enlaces</li>
+          <li>2 cambios por año, solo de enlaces e imagen del hero</li>
           <li>Código QR en SVG o PDF vectorial</li>
         </ul>
       </div>
@@ -92,25 +94,27 @@ h2{font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--dim
       <div id="break"></div>
       <div class="ann">
         <div class="top"><span>Anualidad</span><b id="annV">$500.00</b></div>
-        <small>Pago único por anualidad. En diciembre es proporcional a la entrega del Hub.</small>
+        <small>Pago único por anualidad a partir de la entrega del Hub</small>
+        <div class="grand"><span>Total sin anualidad</span><span id="grandNo"></span></div>
         <div class="grand"><span>Total con anualidad</span><span id="grand"></span></div>
       </div>
       <div class="act"><button id="all" class="pri">Pack completo</button><button id="clear">Limpiar</button></div>
-      <p class="note">Al sumar los accesorios en el orden del listado, el total coincide con los acumulados de la lista de precios.</p>
+      <p class="note">Los formularios de prospección tienen el mismo precio en ambas tarifas.</p>
     </aside>
   </div>
 </div>
 
 <script>
 const BASE=[799,599], ANN=500;
-const BUTTONS=["Guardar contacto","WhatsApp","Llamar","Correo electrónico","Redes sociales","Sitio web empresarial","Configura tu solicitud inmobiliaria","En alianza con Kliq","Ubicación de la empresa"];
+const BTN_A=["Guardar contacto","Compartir contacto","WhatsApp","Llamar","Correo electrónico","Redes sociales","Sitio web empresarial","Configura tu solicitud inmobiliaria","Ubicación de la empresa"];
+const BUTTONS=[BTN_A,[...BTN_A.slice(0,8),"En alianza con Kliq",BTN_A[8]]];
 const ITEMS=[
- {id:"fb",g:"g-base",n:"Formulario activo",s:"Compra de casa habitación",p:[400,300]},
- {id:"rc",g:"g-forms",n:"Renta de casa habitación",p:[300,200]},
- {id:"rd",g:"g-forms",n:"Renta de departamento",p:[300,200]},
- {id:"ro",g:"g-forms",n:"Renta de oficinas y cowork",p:[300,200]},
- {id:"rl",g:"g-forms",n:"Renta de locales comerciales",p:[300,200]},
- {id:"rb",g:"g-forms",n:"Renta de bodegas / nave industrial",p:[400,300]},
+ {id:"fb",g:"g-forms",n:"Compra de casa habitación",p:[400,400]},
+ {id:"rc",g:"g-forms",n:"Renta de casa habitación",p:[300,300]},
+ {id:"rd",g:"g-forms",n:"Renta de departamento",p:[300,300]},
+ {id:"ro",g:"g-forms",n:"Renta de oficinas y cowork",p:[300,300]},
+ {id:"rl",g:"g-forms",n:"Renta de locales comerciales",p:[300,300]},
+ {id:"rb",g:"g-forms",n:"Renta de bodegas / nave industrial",p:[300,300]},
  {id:"nfc",g:"g-nfc",n:"Tarjeta NFC de PVC, tamaño estándar, blanca",s:"Configurada · personalización a cuenta del usuario",p:[400,300]},
  {id:"ot",g:"g-otros",n:"Otros formularios",s:"A partir de 10 suscripciones de interés",p:[500,500]}
 ];
@@ -124,7 +128,7 @@ ITEMS.forEach(it=>{
   l.querySelector("input").addEventListener("change",e=>{e.target.checked?sel.add(it.id):sel.delete(it.id);render();});
   $(it.g).appendChild(l);
 });
-$("chips").innerHTML=BUTTONS.map(b=>`<span>${b}</span>`).join("");
+
 
 function countTo(target){
   cancelAnimationFrame(raf);
@@ -136,6 +140,7 @@ function countTo(target){
 function render(){
   const base=BASE[tier];
   $("basePrice").textContent=fmt(base);
+  $("chips").innerHTML=BUTTONS[tier].map(b=>`<li>${b}</li>`).join("");
   document.querySelectorAll(".opt").forEach(l=>{
     const it=ITEMS.find(x=>x.id===l.dataset.id);
     l.querySelector(".p").textContent="+"+fmt(it.p[tier]);
@@ -148,6 +153,7 @@ function render(){
   $("break").innerHTML=rows.map(r=>`<div class="row${prevSel.has(r.id)?"":" new"}"><div class="top"><span>${r.n}</span><b>${fmt(r.v)}</b></div><div class="bar"><i data-w="${(r.v/total*100).toFixed(1)}"></i></div></div>`).join("");
   requestAnimationFrame(()=>document.querySelectorAll(".bar i").forEach(b=>b.style.width=b.dataset.w+"%"));
   prevSel=new Set(rows.map(r=>r.id));
+  $("grandNo").textContent=fmt(total);
   $("grand").textContent=fmt(total+ANN);
   countTo(total);
 }
